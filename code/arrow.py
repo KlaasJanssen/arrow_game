@@ -7,7 +7,7 @@ class Arrow(pygame.sprite.Sprite):
         super().__init__()
         self.screen = pygame.display.get_surface()
         self.image = pygame.Surface((5,10), pygame.SRCALPHA)
-        self.image.fill((255,255,255))
+        #self.image.fill((255,255,255))
         self.rect = self.image.get_rect(center = pos)
         self.arrow_surf = pygame.image.load('../assets/arrow.png').convert_alpha()
 
@@ -35,10 +35,16 @@ class Arrow(pygame.sprite.Sprite):
     def draw_arrow(self):
         if not self.stuck:
             self.rotate_arrow()
-        if self.velocity[1] >= 0:
-            self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0] - self.velocity[0],self.rect.bottomright[1]))
+        if self.velocity[0] >= 0:
+            if self.velocity[1] >= 0:
+                self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1] + 4))
+            else:
+                self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1]))
         else:
-            self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0] - self.velocity[0],self.rect.topright[1]))
+            if self.velocity[1] >= 0:
+                self.arrow_rect = self.rotated_arrow.get_rect(bottomleft = (self.rect.bottomleft[0], self.rect.bottomleft[1]))
+            else:
+                self.arrow_rect = self.rotated_arrow.get_rect(topleft = (self.rect.topleft[0], self.rect.topleft[1]))
         self.screen.blit(self.rotated_arrow, self.arrow_rect)
 
     def rotate_arrow(self):
