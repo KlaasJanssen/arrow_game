@@ -11,7 +11,7 @@ class Level:
         self.vars = vars
         self.current_level = current_level
         self.level_data = levels[self.current_level]
-        self.player = pygame.sprite.GroupSingle(Archer(self.level_data['player_pos']))
+        self.player = pygame.sprite.GroupSingle(Archer(self.level_data['player_pos'], self.current_level))
         self.ground_height = self.level_data['ground_height']
 
         # Create Ground
