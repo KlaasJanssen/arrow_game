@@ -39,7 +39,7 @@ class Arrow(pygame.sprite.Sprite):
             if self.velocity[1] >= 0:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1] + 4))
             else:
-                self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1]))
+                self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1] + 4))
         else:
             if self.velocity[1] >= 0:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomleft = (self.rect.bottomleft[0], self.rect.bottomleft[1]))
