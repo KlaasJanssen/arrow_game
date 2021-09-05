@@ -49,7 +49,7 @@ class Arrow(pygame.sprite.Sprite):
 
     def rotate_arrow(self):
         angle = degrees(atan2(self.velocity[0], self.velocity[1])) - 90
-        self.rotated_arrow = pygame.transform.rotate(self.arrow_surf, angle)
+        self.rotated_arrow = pygame.transform.rotozoom(self.arrow_surf, angle, 1)
 
 
     def update(self):
