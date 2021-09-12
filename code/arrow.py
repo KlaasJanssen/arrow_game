@@ -2,8 +2,9 @@ import pygame
 from math import atan2, degrees
 from game_data import levels
 
+
 class Arrow(pygame.sprite.Sprite):
-    def __init__(self, pos, velocity, current_level):
+    def __init__(self, pos, velocity, current_level, blood_particles):
         super().__init__()
         self.screen = pygame.display.get_surface()
         self.image = pygame.Surface((5,10), pygame.SRCALPHA)
@@ -17,34 +18,65 @@ class Arrow(pygame.sprite.Sprite):
         self.pos = pos
         self.velocity = velocity
         self.stuck = False
+        self.going_up = False
+
+        self.blood_particles = blood_particles
 
     def move(self):
         self.pos += self.velocity
         self.rect.center = self.pos
-        self.detect_collision()
 
-    def detect_collision(self):
+    def detect_collision(self, enemies, obstacles):
+        if self.stuck:
+            return
+
+        # Ground
         if self.rect.bottom >= self.ground_height:
             self.stuck = True
             self.velocity = pygame.math.Vector2(0,0)
+
+        # Enemy
+        for enemy in enemies.sprites():
+            if self.rect.colliderect(enemy.rect):
+                offset_x = int(self.arrow_rect.left - enemy.rect.left)
+                offset_y = int(enemy.rect.top - self.arrow_rect.top)
+                offset = (offset_x, offset_y)
+                self.arrow_mask = pygame.mask.from_surface(self.rotated_arrow)
+                if self.arrow_mask.overlap(enemy.mask, offset):
+                    self.stuck = True
+                    self.velocity = pygame.math.Vector2(0,0)
+                    if not enemy.dead:
+                        self.blood_particles(enemy)
+                        enemy.kill()
+                        self.kill()
+
+        # Obstacle
+        for obstacle in obstacles.sprites():
+            if self.rect.colliderect(obstacle.rect):
+                self.stuck = True
+                if self.velocity[1] < 0:
+                    self.going_up = True
+                self.velocity = pygame.math.Vector2(0,0)
 
     def apply_gravity(self):
         if not self.stuck:
             self.velocity[1] += 0.1
 
-    def draw_arrow(self):
+    def get_rotated_arrow_image(self):
         if not self.stuck:
             self.rotate_arrow()
         if self.velocity[0] >= 0:
-            if self.velocity[1] >= 0:
+            if self.velocity[1] >= 0 and not self.going_up:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1] + 4))
             else:
                 self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1] + 4))
         else:
-            if self.velocity[1] >= 0:
+            if self.velocity[1] >= 0 and not self.going_up:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomleft = (self.rect.bottomleft[0], self.rect.bottomleft[1]))
             else:
                 self.arrow_rect = self.rotated_arrow.get_rect(topleft = (self.rect.topleft[0], self.rect.topleft[1]))
+
+    def draw_arrow(self):
         self.screen.blit(self.rotated_arrow, self.arrow_rect)
 
     def rotate_arrow(self):
@@ -52,8 +84,10 @@ class Arrow(pygame.sprite.Sprite):
         self.rotated_arrow = pygame.transform.rotozoom(self.arrow_surf, angle, 1)
 
 
-    def update(self):
+    def update(self, enemies, obstacles):
         self.move()
+        self.get_rotated_arrow_image()
+        self.detect_collision(enemies, obstacles)
         self.apply_gravity()
 
         self.draw_arrow()

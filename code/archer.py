@@ -3,7 +3,7 @@ from arrow import Arrow
 from math import atan2, degrees, radians, cos, sin
 
 class Archer(pygame.sprite.Sprite):
-    def __init__(self, pos, current_level):
+    def __init__(self, pos, current_level, blood_particles):
         super().__init__()
 
         # Setup
@@ -16,6 +16,7 @@ class Archer(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(bottomleft = pos)
 
         # Arrows
+        self.blood_particles = blood_particles
         self.arrows = pygame.sprite.Group()
         self.arrow_available = True
         self.max_countdown = 60
@@ -42,7 +43,7 @@ class Archer(pygame.sprite.Sprite):
         elif self.bow_drawn:
             if self.power >= 1:
                 arrow_pos = self.get_arrow_pos()
-                self.arrows.add(Arrow(arrow_pos, pygame.math.Vector2(self.direction * self.power), self.current_level))
+                self.arrows.add(Arrow(arrow_pos, pygame.math.Vector2(self.direction * self.power), self.current_level, self.blood_particles))
                 self.arrow_countdown = self.max_countdown
                 self.arrow_available = False
             self.bow_drawn = False
@@ -104,11 +105,11 @@ class Archer(pygame.sprite.Sprite):
         self.bow_rect = self.bow_surf.get_rect(center = (self.pos[0] + 18, self.pos[1] - 50))
         self.screen.blit(self.bow_surf, self.bow_rect)
 
-    def update(self):
+    def update(self, enemies, obstacles):
         # Updates
         self.get_input()
         self.update_countdown()
-        self.arrows.update()
+        self.arrows.update(enemies, obstacles)
 
         # Draw
         self.draw_bow()

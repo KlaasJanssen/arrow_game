@@ -5,5 +5,6 @@ class Vars:
     def __init__(self):
         self.state = 'active'
         self.max_level = 1
+        self.current_level = 1
 
 vars = Vars()
