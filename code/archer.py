@@ -65,9 +65,9 @@ class Archer(pygame.sprite.Sprite):
             if power < 2: power = 2
             pos = self.get_arrow_pos()
             velocity = power * self.direction
-            radius = 10
+            radius = 8
             radiusminus = 1
-            for i in range(101):
+            for i in range(51):
                 pos += velocity
                 velocity[1] += 0.1
                 if i % 5 == 0 and not i == 0 and not i == 1:

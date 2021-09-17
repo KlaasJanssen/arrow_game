@@ -31,7 +31,7 @@ class Arrow(pygame.sprite.Sprite):
             return
 
         # Ground
-        if self.rect.bottom >= self.ground_height:
+        if self.rect.bottom > self.ground_height:
             self.stuck = True
             self.velocity = pygame.math.Vector2(0,0)
 
@@ -67,9 +67,9 @@ class Arrow(pygame.sprite.Sprite):
             self.rotate_arrow()
         if self.velocity[0] >= 0:
             if self.velocity[1] >= 0 and not self.going_up:
-                self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1] + 4))
+                self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1]))
             else:
-                self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1] + 4))
+                self.arrow_rect = self.rotated_arrow.get_rect(topright = (self.rect.topright[0], self.rect.topright[1]))
         else:
             if self.velocity[1] >= 0 and not self.going_up:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomleft = (self.rect.bottomleft[0], self.rect.bottomleft[1]))
