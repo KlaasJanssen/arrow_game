@@ -18,13 +18,17 @@ class Arrow(pygame.sprite.Sprite):
         self.pos = pos
         self.velocity = velocity
         self.stuck = False
+        self.stuck_in_moving = False
         self.going_up = False
+        self.going_left = False
 
         self.blood_particles = blood_particles
 
     def move(self):
         self.pos += self.velocity
         self.rect.center = self.pos
+        if self.stuck_in_moving:
+            self.rect.topleft = self.stuck_in_obstacle.rect.topleft + self.offset
 
     def detect_collision(self, enemies, obstacles):
         if self.stuck:
@@ -33,6 +37,8 @@ class Arrow(pygame.sprite.Sprite):
         # Ground
         if self.rect.bottom > self.ground_height:
             self.stuck = True
+            if self.velocity[0] < 0:
+                self.going_left = True
             self.velocity = pygame.math.Vector2(0,0)
 
         # Enemy
@@ -46,17 +52,30 @@ class Arrow(pygame.sprite.Sprite):
                     self.stuck = True
                     self.velocity = pygame.math.Vector2(0,0)
                     if not enemy.dead:
-                        self.blood_particles(enemy)
+                        if enemy.moving:
+                            self.blood_particles(enemy, enemy.moving_on)
+                        else:
+                            self.blood_particles(enemy)
                         enemy.kill()
                         self.kill()
 
         # Obstacle
         for obstacle in obstacles.sprites():
             if self.rect.colliderect(obstacle.rect):
-                self.stuck = True
-                if self.velocity[1] < 0:
-                    self.going_up = True
-                self.velocity = pygame.math.Vector2(0,0)
+                if obstacle.material == 'wood':
+                    self.stuck = True
+                    if self.velocity[0] < 0:
+                        self.going_left = True
+                    if self.velocity[1] < 0:
+                        self.going_up = True
+                    self.velocity = pygame.math.Vector2(0,0)
+                    if obstacle.type == 'dynamic':
+                        self.stuck_in_moving = True
+                        self.stuck_in_obstacle = obstacle
+                        self.offset = pygame.math.Vector2(self.rect.topleft) - pygame.math.Vector2(obstacle.rect.topleft)
+                elif obstacle.material == 'metal':
+                    self.velocity[0] *= -1
+                    return
 
     def apply_gravity(self):
         if not self.stuck:
@@ -65,7 +84,7 @@ class Arrow(pygame.sprite.Sprite):
     def get_rotated_arrow_image(self):
         if not self.stuck:
             self.rotate_arrow()
-        if self.velocity[0] >= 0:
+        if self.velocity[0] >= 0 and not self.going_left:
             if self.velocity[1] >= 0 and not self.going_up:
                 self.arrow_rect = self.rotated_arrow.get_rect(bottomright = (self.rect.bottomright[0], self.rect.bottomright[1]))
             else:

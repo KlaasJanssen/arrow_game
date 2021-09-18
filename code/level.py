@@ -24,11 +24,7 @@ class Level:
         self.ground_surf.fill((146, 105, 64))
         self.ground_rect = self.ground_surf.get_rect(topleft = (0, self.ground_height))
 
-        # Enemies
-        self.enemy_data = self.level_data['enemies']
-        self.enemies = pygame.sprite.Group()
-        for enemy_pos in self.enemy_data:
-            self.enemies.add(Enemy(enemy_pos))
+
 
         # Blood particles
         self.blood_particles = pygame.sprite.Group()
@@ -39,8 +35,14 @@ class Level:
         for obstacle_pos in self.obstacle_data:
             self.obstacles.add(Obstacle(obstacle_pos))
 
-    def blood_particles(self, enemy):
-        self.blood_particles.add(Particle(enemy.rect.center))
+        # Enemies
+        self.enemy_data = self.level_data['enemies']
+        self.enemies = pygame.sprite.Group()
+        for enemy_pos in self.enemy_data:
+            self.enemies.add(Enemy(enemy_pos, self.obstacles))
+
+    def blood_particles(self, enemy, obstacle = None):
+        self.blood_particles.add(Particle(enemy.rect.center, obstacle))
 
     def detect_win(self):
         if not self.enemies:
@@ -50,11 +52,13 @@ class Level:
     def run(self):
 
         # Update
+        self.obstacles.update()
         if self.state == 'active':
             self.player.update(self.enemies, self.obstacles)
             self.enemies.update()
             self.detect_win()
         self.blood_particles.update()
+
 
         # Draw
         # Arrows keep updating and being drawn after game is over
