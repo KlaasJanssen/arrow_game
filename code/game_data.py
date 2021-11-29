@@ -17,7 +17,7 @@ level_2 = {
 (screen_width * 17/22, screen_height * (6/7) + 20),
 (screen_width * 13/22, screen_height * (6/7) + 20)],
 'obstacles':[
-(screen_width * 40/44, screen_height / 2, screen_width * 43 / 44, screen_height, 'wood', 'static')
+(screen_width * 40/44, screen_height / 2, screen_width * 43 / 44, screen_height * (6/7) + 21, 'wood', 'static')
 ]
 }
 
@@ -54,7 +54,7 @@ level_5 = {
 'obstacles':[
 (screen_width * 7/22, screen_height * 8/12, screen_width * 8/22, screen_height * 6/7 + 1, 'wood', 'static'),
 (screen_width * 7/22, screen_height * 8/12, screen_width * 10/22, screen_height * 17/24, 'wood', 'static'),
-(screen_width * 13/22, screen_height * 7/12, screen_width * 14/22, screen_height * 6/7 + 1, 'metal', 'static')
+(screen_width * 13/22, screen_height * 7/12, screen_width * 14/22, screen_height * 6/7 + 2, 'metal', 'static')
 ]
 }
 

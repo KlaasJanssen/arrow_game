@@ -20,8 +20,7 @@ class Level:
         self.state = 'active'
 
         # Create Ground
-        self.ground_surf = pygame.Surface((screen_width, screen_height - self.ground_height))
-        self.ground_surf.fill((146, 105, 64))
+        self.ground_surf = pygame.image.load('../assets/ground.png').convert_alpha()
         self.ground_rect = self.ground_surf.get_rect(topleft = (0, self.ground_height))
 
 
@@ -67,11 +66,11 @@ class Level:
             self.player.sprite.arrows.draw(self.screen)
 
         # General drawing
-        self.screen.blit(self.ground_surf, self.ground_rect)
         self.enemies.draw(self.screen)
         self.player.draw(self.screen)
         self.blood_particles.draw(self.screen)
         self.obstacles.draw(self.screen)
+        self.screen.blit(self.ground_surf, self.ground_rect)
 
         # End screen
         if not self.state == 'active':
